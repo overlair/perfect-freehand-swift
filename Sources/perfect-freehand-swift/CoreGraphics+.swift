@@ -18,7 +18,7 @@ enum FreehandConstant {
  * @param A
  * @internal
  */
-func neg(A: CGPoint) -> CGPoint {
+@inlinable func neg(A: CGPoint) -> CGPoint {
     return CGPoint(x: -A.x,y:  -A.y)
 }
 
@@ -28,7 +28,7 @@ func neg(A: CGPoint) -> CGPoint {
  * @param B
  * @internal
  */
-func add(A: CGPoint, B: CGPoint) -> CGPoint  {
+@inlinable func add(A: CGPoint, B: CGPoint) -> CGPoint  {
     return CGPoint(x: A.x + B.x, y: A.y + B.y)
 }
 
@@ -38,7 +38,7 @@ func add(A: CGPoint, B: CGPoint) -> CGPoint  {
  * @param B
  * @internal
  */
-func sub(A: CGPoint, B: CGPoint) -> CGPoint  {
+@inlinable func sub(A: CGPoint, B: CGPoint) -> CGPoint  {
     return CGPoint(x: A.x - B.x, y:  A.y - B.y)
 }
 
@@ -48,7 +48,7 @@ func sub(A: CGPoint, B: CGPoint) -> CGPoint  {
  * @param n
  * @internal
  */
-func mul(A: CGPoint, n: CGFloat) -> CGPoint  {
+@inlinable func mul(A: CGPoint, n: CGFloat) -> CGPoint  {
   return CGPoint(x: A.x * n, y:  A.y * n)
 }
 
@@ -58,7 +58,7 @@ func mul(A: CGPoint, n: CGFloat) -> CGPoint  {
  * @param n
  * @internal
  */
-func div(A: CGPoint, n: CGFloat)  -> CGPoint {
+@inlinable func div(A: CGPoint, n: CGFloat)  -> CGPoint {
   return CGPoint(x: A.x / n, y: A.y / n)
 }
 
@@ -67,7 +67,7 @@ func div(A: CGPoint, n: CGFloat)  -> CGPoint {
  * @param A
  * @internal
  */
-func per(A: CGPoint)  -> CGPoint {
+@inlinable func per(A: CGPoint)  -> CGPoint {
   return CGPoint(x: A.y,y:  -A.x)
 }
 
@@ -77,7 +77,7 @@ func per(A: CGPoint)  -> CGPoint {
  * @param B
  * @internal
  */
-func dpr(A: CGPoint, B: CGPoint)  -> CGFloat {
+@inlinable func dpr(A: CGPoint, B: CGPoint)  -> CGFloat {
   return A.x * B.x + A.y * B.y
 }
 
@@ -87,7 +87,7 @@ func dpr(A: CGPoint, B: CGPoint)  -> CGFloat {
  * @param B
  * @internal
  */
-func isEqual(A: CGPoint, B: CGPoint) -> Bool  {
+@inlinable func isEqual(A: CGPoint, B: CGPoint) -> Bool  {
   return A.x == B.x && A.y == B.y
 }
 
@@ -96,7 +96,7 @@ func isEqual(A: CGPoint, B: CGPoint) -> Bool  {
  * @param A
  * @internal
  */
-func len(A: CGPoint)  -> CGFloat {
+@inlinable func len(A: CGPoint)  -> CGFloat {
   return hypot(A.x, A.y)
 }
 
@@ -105,7 +105,7 @@ func len(A: CGPoint)  -> CGFloat {
  * @param A
  * @internal
  */
-func len2(A: CGPoint)  -> CGFloat {
+@inlinable func len2(A: CGPoint)  -> CGFloat {
     return A.x * A.x + A.y * A.y
     
 }
@@ -116,7 +116,7 @@ func len2(A: CGPoint)  -> CGFloat {
  * @param B
  * @internal
  */
-func dist2(A: CGPoint, B: CGPoint) -> CGFloat  {
+@inlinable func dist2(A: CGPoint, B: CGPoint) -> CGFloat  {
     return len2(A: sub(A: A, B: B))
 }
 
@@ -125,7 +125,7 @@ func dist2(A: CGPoint, B: CGPoint) -> CGFloat  {
  * @param A
  * @internal
  */
-func uni(A: CGPoint) -> CGPoint  {
+@inlinable func uni(A: CGPoint) -> CGPoint  {
     return div(A: A, n: len(A: A))
 }
 
@@ -135,7 +135,7 @@ func uni(A: CGPoint) -> CGPoint  {
  * @param B
  * @internal
  */
-func dist(A: CGPoint, B: CGPoint)  -> CGFloat {
+@inlinable func dist(A: CGPoint, B: CGPoint)  -> CGFloat {
   return hypot(A.y - B.y, A.x - B.x)
 }
 
@@ -145,7 +145,7 @@ func dist(A: CGPoint, B: CGPoint)  -> CGFloat {
  * @param B
  * @internal
  */
-func med(A: CGPoint, B: CGPoint)  -> CGPoint {
+@inlinable func med(A: CGPoint, B: CGPoint)  -> CGPoint {
     return mul(A: add(A: A, B: B), n: 0.5)
 }
 
@@ -156,7 +156,7 @@ func med(A: CGPoint, B: CGPoint)  -> CGPoint {
  * @param r rotation in radians
  * @internal
  */
-func rotAround(A: CGPoint, C: CGPoint, r: CGFloat)  -> CGPoint  {
+@inlinable func rotAround(A: CGPoint, C: CGPoint, r: CGFloat)  -> CGPoint  {
   let s = sin(r)
     let c = cos(r)
 
@@ -177,7 +177,7 @@ func rotAround(A: CGPoint, C: CGPoint, r: CGFloat)  -> CGPoint  {
  * @param t scalar
  * @internal
  */
-func lrp(A: CGPoint, B: CGPoint, t: CGFloat)  -> CGPoint {
+@inlinable func lrp(A: CGPoint, B: CGPoint, t: CGFloat)  -> CGPoint {
     return add(A: A, B: mul(A: sub(A: B, B: A), n: t))
 }
 
@@ -188,7 +188,7 @@ func lrp(A: CGPoint, B: CGPoint, t: CGFloat)  -> CGPoint {
  * @param c
  * @internal
  */
-func prj(A: CGPoint, B: CGPoint, c: CGFloat)  -> CGPoint {
+@inlinable func prj(A: CGPoint, B: CGPoint, c: CGFloat)  -> CGPoint {
     return add(A: A, B: mul(A: B, n: c))
 }
 
