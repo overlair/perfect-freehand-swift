@@ -25,3 +25,6 @@ let options: FreehandOption = ...
 let path: CGPath = points.getPath(options: options)
 
 ```
+## Demo
+
+https://github.com/user-attachments/assets/a5053b6a-154a-45a7-9aca-17689615ea3c
