@@ -13,182 +13,136 @@ enum FreehandConstant {
     static let FIXED_PI = CGFloat.pi + 0.00001
 
 }
-/**
- * Negate a vector.
- * @param A
- * @internal
- */
-@inlinable func neg(A: CGPoint) -> CGPoint {
-    return CGPoint(x: -A.x,y:  -A.y)
+
+extension CGPoint {
+    /**
+     * Negate a vector.
+     */
+    @inlinable func neg() -> CGPoint {
+        CGPoint(x: -self.x,y:  -self.y)
+    }
+
+    /**
+     * Add vectors.
+     */
+    @inlinable func add(_ point: CGPoint) -> CGPoint  {
+        CGPoint(x: self.x + point.x, y: self.y + point.y)
+    }
+
+    /**
+     * Subtract vectors.
+     */
+    @inlinable func sub(_ point: CGPoint) -> CGPoint  {
+        CGPoint(x: self.x - point.x, y:  self.y - point.y)
+    }
+
+    /**
+     * Vector multiplication by scalar
+     */
+    @inlinable func mul(_ n: CGFloat) -> CGPoint  {
+        CGPoint(x: self.x * n, y:  self.y * n)
+    }
+
+    /**
+     * Vector division by scalar.
+     */
+    @inlinable func div(_ n: CGFloat)  -> CGPoint {
+        CGPoint(x: self.x / n, y: self.y / n)
+    }
+
+    /**
+     * Perpendicular rotation of a vector A
+     */
+    @inlinable func per()  -> CGPoint {
+      CGPoint(x: self.y,y:  -self.x)
+    }
+
+    /**
+     * Dot product
+     */
+    @inlinable func dpr(_ point: CGPoint)  -> CGFloat {
+      self.x * point.x + self.y * point.y
+    }
+
+    /**
+     * Get whether two vectors are equal.
+     */
+    @inlinable func isEqual(_ point: CGPoint) -> Bool  {
+      self.x == point.x && self.y == point.y
+    }
+
+    /**
+     * Length of the vector
+     */
+    @inlinable func len()  -> CGFloat {
+      hypot(self.x, self.y)
+    }
+
+    /**
+     * Length of the vector squared
+     */
+    @inlinable func len2()  -> CGFloat {
+        self.x * self.x + self.y * self.y
+        
+    }
+
+    /**
+     * Dist length from A to B squared.
+     */
+    @inlinable func dist2(_ point: CGPoint) -> CGFloat  {
+        self.sub(point).len2()
+    }
+
+    /**
+     * Get normalized / unit vector.
+     */
+    @inlinable func uni() -> CGPoint  {
+        self.div(self.len())
+    }
+
+    /**
+     * Dist length from A to B
+     */
+    @inlinable func dist(_ point: CGPoint)  -> CGFloat {
+      return hypot(self.y - point.y, self.x - point.x)
+    }
+
+    /**
+     * Mean between two vectors or mid vector between two vectors
+     */
+    @inlinable func med(_ point: CGPoint)  -> CGPoint {
+        self.add(point).mul(0.5)
+    }
+
+    /**
+     * Rotate a vector around another vector by r (radians)
+     */
+    @inlinable func rotAround(_ point: CGPoint, r: CGFloat)  -> CGPoint  {
+        let s = sin(r)
+        let c = cos(r)
+
+        let px = self.x - point.x
+        let py = self.y - point.y
+
+        let nx = px * c - py * s
+        let ny = px * s + py * c
+
+        return CGPoint(x: nx + point.x,
+                      y: ny + point.y)
+    }
+
+    /**
+     * Interpolate vector A to B with a scalar t
+     */
+    @inlinable func lrp(_ point: CGPoint, t: CGFloat)  -> CGPoint {
+        self.add(point.sub(self).mul(t))
+    }
+
+    /**
+        Project a point A in the direction B by a scalar c
+     */
+    @inlinable func prj(_ point: CGPoint, c: CGFloat)  -> CGPoint {
+        self.add(point.mul(c))
+    }
+
 }
-
-/**
- * Add vectors.
- * @param A
- * @param B
- * @internal
- */
-@inlinable func add(A: CGPoint, B: CGPoint) -> CGPoint  {
-    return CGPoint(x: A.x + B.x, y: A.y + B.y)
-}
-
-/**
- * Subtract vectors.
- * @param A
- * @param B
- * @internal
- */
-@inlinable func sub(A: CGPoint, B: CGPoint) -> CGPoint  {
-    return CGPoint(x: A.x - B.x, y:  A.y - B.y)
-}
-
-/**
- * Vector multiplication by scalar
- * @param A
- * @param n
- * @internal
- */
-@inlinable func mul(A: CGPoint, n: CGFloat) -> CGPoint  {
-  return CGPoint(x: A.x * n, y:  A.y * n)
-}
-
-/**
- * Vector division by scalar.
- * @param A
- * @param n
- * @internal
- */
-@inlinable func div(A: CGPoint, n: CGFloat)  -> CGPoint {
-  return CGPoint(x: A.x / n, y: A.y / n)
-}
-
-/**
- * Perpendicular rotation of a vector A
- * @param A
- * @internal
- */
-@inlinable func per(A: CGPoint)  -> CGPoint {
-  return CGPoint(x: A.y,y:  -A.x)
-}
-
-/**
- * Dot product
- * @param A
- * @param B
- * @internal
- */
-@inlinable func dpr(A: CGPoint, B: CGPoint)  -> CGFloat {
-  return A.x * B.x + A.y * B.y
-}
-
-/**
- * Get whether two vectors are equal.
- * @param A
- * @param B
- * @internal
- */
-@inlinable func isEqual(A: CGPoint, B: CGPoint) -> Bool  {
-  return A.x == B.x && A.y == B.y
-}
-
-/**
- * Length of the vector
- * @param A
- * @internal
- */
-@inlinable func len(A: CGPoint)  -> CGFloat {
-  return hypot(A.x, A.y)
-}
-
-/**
- * Length of the vector squared
- * @param A
- * @internal
- */
-@inlinable func len2(A: CGPoint)  -> CGFloat {
-    return A.x * A.x + A.y * A.y
-    
-}
-
-/**
- * Dist length from A to B squared.
- * @param A
- * @param B
- * @internal
- */
-@inlinable func dist2(A: CGPoint, B: CGPoint) -> CGFloat  {
-    return len2(A: sub(A: A, B: B))
-}
-
-/**
- * Get normalized / unit vector.
- * @param A
- * @internal
- */
-@inlinable func uni(A: CGPoint) -> CGPoint  {
-    return div(A: A, n: len(A: A))
-}
-
-/**
- * Dist length from A to B
- * @param A
- * @param B
- * @internal
- */
-@inlinable func dist(A: CGPoint, B: CGPoint)  -> CGFloat {
-  return hypot(A.y - B.y, A.x - B.x)
-}
-
-/**
- * Mean between two vectors or mid vector between two vectors
- * @param A
- * @param B
- * @internal
- */
-@inlinable func med(A: CGPoint, B: CGPoint)  -> CGPoint {
-    return mul(A: add(A: A, B: B), n: 0.5)
-}
-
-/**
- * Rotate a vector around another vector by r (radians)
- * @param A vector
- * @param C center
- * @param r rotation in radians
- * @internal
- */
-@inlinable func rotAround(A: CGPoint, C: CGPoint, r: CGFloat)  -> CGPoint  {
-  let s = sin(r)
-    let c = cos(r)
-
-    let px = A.x - C.x
-    let py = A.y - C.y
-
-    let nx = px * c - py * s
-    let ny = px * s + py * c
-
-    return CGPoint(x: nx + C.x,
-                  y: ny + C.y)
-}
-
-/**
- * Interpolate vector A to B with a scalar t
- * @param A
- * @param B
- * @param t scalar
- * @internal
- */
-@inlinable func lrp(A: CGPoint, B: CGPoint, t: CGFloat)  -> CGPoint {
-    return add(A: A, B: mul(A: sub(A: B, B: A), n: t))
-}
-
-/**
- * Project a point A in the direction B by a scalar c
- * @param A
- * @param B
- * @param c
- * @internal
- */
-@inlinable func prj(A: CGPoint, B: CGPoint, c: CGFloat)  -> CGPoint {
-    return add(A: A, B: mul(A: B, n: c))
-}
-
