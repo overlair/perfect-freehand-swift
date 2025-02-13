@@ -3,7 +3,7 @@
 //  perfect-freehand-swift
 //
 //  Created by John Knowles on 1/27/25.
-//
+// (Comments lifted from https://github.com/steveruizok/perfect-freehand)
 
 import CoreGraphics
 
@@ -47,7 +47,9 @@ extension [FreehandPoint] {
       points: [FreehandPoint],
       options: FreehandOptions
     ) -> [CGPoint] {
-        return getStrokeOutlinePoints(points: getStrokePoints(points: points, options: options), options: options)
+        return getStrokeOutlinePoints(points: getStrokePoints(points: points,
+                                                              options: options),
+                                      options: options)
     }
 
     
@@ -61,13 +63,13 @@ extension [FreehandPoint] {
             }
 
              // The total length of the line
-             var totalLength = points[points.count - 1].runningLength
+            let totalLength = points[points.count - 1].runningLength
 
-            var taperStart = options.start.taper ?? 0
-            var taperEnd = options.end.taper ?? 0
+            let taperStart = options.start.taper ?? 0
+            let taperEnd = options.end.taper ?? 0
             
              // The minimum allowed distance between points (squared)
-            var minDistance = pow(options.size * options.smoothing, 2)
+            let minDistance = pow(options.size * options.smoothing, 2)
 
              // Our collected left and right points
             var leftPts =  [CGPoint]()
@@ -119,7 +121,8 @@ extension [FreehandPoint] {
              // ... so that we don't detect the same corner twice
              var isPrevPointSharpCorner = false
 
-              var short = true
+            ///  unused...remove?
+//              var short = true
 
              /*
                Find the outline's left and right points
@@ -130,11 +133,11 @@ extension [FreehandPoint] {
             let lastIndex = points.count - 1
 
             for i in 0...lastIndex {
-                var point  = points[i].point
-                var vector  = points[i].vector
-                var distance  = points[i].distance
+                let point  = points[i].point
+                let vector  = points[i].vector
+                let distance  = points[i].distance
+                let runningLength  = points[i].runningLength
                 var pressure  = points[i].pressure
-                var runningLength  = points[i].runningLength
 
                // Removes noise from the end of the line
                if i < lastIndex && totalLength - runningLength < 3 {
@@ -182,12 +185,12 @@ extension [FreehandPoint] {
                  of the two taper strengths to the radius.
                */
 
-               var ts =
+                let ts =
                  runningLength < taperStart
                 ? options.start.easing(runningLength / taperStart)
                    : 1
 
-                var te =
+                let te =
                  totalLength - runningLength < taperEnd
                    ? options.end.easing((totalLength - runningLength) / taperEnd)
                    : 1
@@ -206,8 +209,8 @@ extension [FreehandPoint] {
 
                let nextVector = (i < lastIndex ? points[i + 1] : points[i])
                  .vector
-                let nextDpr = i < lastIndex ? dpr(A: vector, B: nextVector) : 1.0
-                let prevDpr = dpr(A: vector, B: prevVector)
+                let nextDpr = i < lastIndex ? vector.dpr(nextVector) : 1.0
+                let prevDpr = vector.dpr(prevVector)
 
                 let isPointSharpCorner = prevDpr < 0 && !isPrevPointSharpCorner
                 let isNextPointSharpCorner = nextDpr < 0
@@ -217,12 +220,12 @@ extension [FreehandPoint] {
                  // Considering saving these and drawing them later? So that we can avoid
                  // crossing future points.
 
-                   let offset = mul(A: per(A: prevVector), n: radius)
+                   let offset = prevVector.per().mul(radius)
                    for t in stride(from: 0, to: 1, by: CGFloat(1) / CGFloat(13)) {
-                       tl = rotAround(A: sub(A: point, B: offset),C: point, r: FreehandConstant.FIXED_PI * CGFloat(t))
+                       tl = point.sub(offset).rotAround( point, r: FreehandConstant.FIXED_PI * CGFloat(t))
                        leftPts.append(tl)
 
-                       tr = rotAround(A: add(A: point, B: offset), C: point, r: FreehandConstant.FIXED_PI * -CGFloat(t))
+                       tr = point.add(offset).rotAround( point, r: FreehandConstant.FIXED_PI * -CGFloat(t))
                        rightPts.append(tr)
                  }
 
@@ -239,9 +242,9 @@ extension [FreehandPoint] {
 
                // Handle the last point
                if (i == points.count - 1) {
-                   let offset = mul(A: per(A: vector), n: radius)
-                   leftPts.append(sub(A: point, B: offset))
-                   rightPts.append(add(A: point, B: offset))
+                   let offset = vector.per().mul(radius)
+                   leftPts.append(point.sub(offset))
+                   rightPts.append(point.add(offset))
                    continue
                }
 
@@ -255,18 +258,18 @@ extension [FreehandPoint] {
                  points array.
                */
 
-                let offset = mul(A: per(A: lrp(A: nextVector, B: vector, t: nextDpr)), n: radius)
+                let offset = nextVector.lrp(vector, t: nextDpr).per().mul( radius)
 
-                tl = sub(A: point, B: offset)
+                tl = point.sub(offset)
 
-                if i <= 1 || dist2(A: pl, B: tl) > minDistance {
+                if i <= 1 || pl.dist2(tl) > minDistance {
                     leftPts.append(tl)
                     pl = tl
                }
 
-                tr = add(A: point, B: offset)
+                tr = point.add(offset)
 
-                if i <= 1 || dist2(A: pr, B: tr) > minDistance {
+                if i <= 1 || pr.dist2( tr) > minDistance {
                     rightPts.append(tr)
                     pr = tr
                }
@@ -286,10 +289,10 @@ extension [FreehandPoint] {
 
              let firstPoint = points[0].point
 
-             var lastPoint =
+             let lastPoint =
                points.count > 1
                  ? points[lastIndex].point
-                 : add(A: points[0].point, B: .init(x: 1, y: 1))
+                 : points[0].point.add(.init(x: 1, y: 1))
 
              var startCap =  [CGPoint]()
              var endCap =  [CGPoint]()
@@ -305,14 +308,13 @@ extension [FreehandPoint] {
 
              if (points.count == 1) {
                if !(taperStart == 0 || taperEnd == 0) || options.last {
-                   var start = prj(A: firstPoint,
-                                   B: uni(A: per(A: sub(A: firstPoint,B: lastPoint))),
+                   let start = firstPoint.prj(firstPoint.sub( lastPoint).per().uni(),
                                    c: -(firstRadius ?? radius)
                  )
                
                    var dotPts =  [CGPoint]()
                for t in stride(from: 0, to: 1, by: CGFloat(1) / CGFloat(13)) {
-                   dotPts.append(rotAround(A: start, C: firstPoint, r: FreehandConstant.FIXED_PI * 2 * CGFloat(t)))
+                   dotPts.append(start.rotAround(firstPoint, r: FreehandConstant.FIXED_PI * 2 * CGFloat(t)))
                }
                    
                  return dotPts
@@ -332,20 +334,20 @@ extension [FreehandPoint] {
                } else if (options.start.cap) {
                  // Draw the round cap - add thirteen points rotating the right point around the start point to the left point
                    for t in stride(from: 0, to: 1, by: CGFloat(1) / CGFloat(13)) {
-                       let pt = rotAround(A: rightPts[0], C: firstPoint, r: FreehandConstant.FIXED_PI * CGFloat(t))
+                       let pt = rightPts[0].rotAround(firstPoint, r: FreehandConstant.FIXED_PI * CGFloat(t))
                        startCap.append(pt)
                  }
                } else {
                  // Draw the flat cap - add a point to the left and right of the start point
-                   let cornersVector = sub(A: leftPts[0], B: rightPts[0])
-                   let offsetA = mul(A: cornersVector, n: 0.5)
-                   let offsetB = mul(A: cornersVector, n: 0.51)
+                   let cornersVector = leftPts[0].sub( rightPts[0])
+                   let offsetA = cornersVector.mul( 0.5)
+                   let offsetB = cornersVector.mul(0.51)
 
                    startCap.append(contentsOf: [
-                    sub(A: firstPoint,  B: offsetA),
-                    sub(A: firstPoint,  B: offsetB),
-                    add(A: firstPoint, B:  offsetB),
-                    add(A: firstPoint, B: offsetA)
+                    firstPoint.sub(offsetA),
+                    firstPoint.sub(offsetB),
+                    firstPoint.add(offsetB),
+                    firstPoint.add(offsetA)
                     ]
                  )
                }
@@ -360,25 +362,25 @@ extension [FreehandPoint] {
                sharp end turns.
              */
 
-                 let direction = per(A: neg(A: points[lastIndex].vector))
+                 let direction = points[lastIndex].vector.neg().per()
 
                if (taperEnd > 0 || (taperStart > 0 && points.count == 1)) {
                  // Tapered end - push the last point to the line
                  endCap.append(lastPoint)
                } else if options.end.cap {
                  // Draw the round end cap
-                   let start = prj(A: lastPoint, B: direction, c: radius)
+                   let start = lastPoint.prj(direction, c: radius)
                    for t in stride(from: 0, to: 1, by: CGFloat(1) / CGFloat(29)) {
-                       endCap.append(rotAround(A: start, C: lastPoint, r:  FreehandConstant.FIXED_PI * 3 * CGFloat(t)))
+                       endCap.append(start.rotAround(lastPoint, r:  FreehandConstant.FIXED_PI * 3 * CGFloat(t)))
                    }
                 } else {
                  // Draw the flat end cap
 
                     endCap.append(contentsOf: [
-                        add(A: lastPoint, B: mul(A: direction, n: radius)),
-                        add(A: lastPoint,  B: mul(A: direction,  n: radius * 0.99)),
-                        sub(A: lastPoint,  B: mul(A: direction,  n: radius * 0.99)),
-                        sub(A: lastPoint,  B: mul(A: direction,  n: radius))
+                        lastPoint.add(direction.mul(radius)),
+                        lastPoint.add(direction.mul( radius * 0.99)),
+                        lastPoint.sub( direction.mul(radius * 0.99)),
+                        lastPoint.sub( direction.mul(radius))
                    ]
                  )
                }
@@ -403,8 +405,8 @@ extension [FreehandPoint] {
                return []
            }
            
-           var isComplete = false
-           var  size = CGFloat(16)
+           let isComplete = false
+           let  size = CGFloat(16)
         
                 // Find the interpolation level between points.
            let t =  0.15 + (1 - options.streamline) * 0.85
@@ -420,7 +422,7 @@ extension [FreehandPoint] {
             let last = pts[1]
     //        pts = pts.slice(0, -1)
               for i in 1..<5 {
-                  let point = lrp(A: pts[0].point, B: last.point, t: CGFloat(i) / 4)
+                  let point = pts[0].point.lrp(last.point, t: CGFloat(i) / 4)
                   pts.append(.init(point: point, pressure: last.pressure))
             }
           }
@@ -455,26 +457,26 @@ extension [FreehandPoint] {
           // the distance and vector of the next point.
           var prev = strokePoints[0]
 
-           var max = pts.count - 1
+           let max = pts.count - 1
 
           // Iterate through all of the points, creating StrokePoints.
            for i in 1..<pts.count {
                
-               var point = isComplete &&  i == max ?
+               let point = isComplete &&  i == max ?
                        // If we're at the last point, and `options.last` is true,
                          // then add the actual input point.
                pts[i].point
                    : // Otherwise, using the t calculated from the streamline
                      // option, interpolate a new point between the previous
                      // point the current point.
-               lrp(A: prev.point, B: pts[i].point, t: t)
+               prev.point.lrp(pts[i].point, t: t)
            
         
             // If the new point is the same as the previous point, skip ahead.
-               if (isEqual(A: prev.point, B: point)) { continue }
+               if (prev.point.isEqual(point)) { continue }
 
             // How far is the new point from the previous point?
-               let distance = dist(A: point, B: prev.point)
+               let distance = point.dist(prev.point)
 
             // Add this distance to the total "running length" of the line.
                runningLength += distance
@@ -495,7 +497,7 @@ extension [FreehandPoint] {
                 // The distance between the current point and the previous point
                 distance: distance,
               // The vector from the current point to the previous point
-                vector: uni(A: sub(A: prev.point, B: point)),
+                vector: prev.point.sub(point).uni(),
               // The total distance so far
               runningLength: runningLength
             )
