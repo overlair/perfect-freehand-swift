@@ -31,15 +31,18 @@ struct ContentView: View {
                 .overlay(touchesView)
                 .contentShape(Rectangle())
             
-            ForEach(strokes) { stroke in
-                Path(stroke.path)
-                    .fill(.blue)
+            Group {
+                ForEach(strokes) { stroke in
+                    Path(stroke.path)
+                        .fill(.blue)
+                }
+                
+                if let path = inProgressPath {
+                    Path(path)
+                        .fill(.blue)
+                }
             }
-            
-            if let path = inProgressPath {
-                Path(path)
-                    .fill(.blue)
-            }
+            .allowsHitTesting(false)
         }
         .overlay(alignment: .topTrailing, content: closeButton)
         .onReceive(inProgressStroke, perform: handleInProgressStroke)
