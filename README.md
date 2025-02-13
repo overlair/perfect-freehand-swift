@@ -27,4 +27,4 @@ let path: CGPath = points.getPath(options: options)
 ```
 ## Demo
 
-![](PerfectFreehandDemo-1.mov)
+https://github.com/overlair/perfect-freehand-swift/PerfectFreehandDemo-1.mov
