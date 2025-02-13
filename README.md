@@ -25,3 +25,6 @@ let options: FreehandOption = ...
 let path: CGPath = points.getPath(options: options)
 
 ```
+## Demo
+
+![](PerfectFreehandDemo-1.mov)
