@@ -8,8 +8,8 @@
 import CoreGraphics
 
 public struct FreehandStrokeEnd {
-    var cap = true
-    var taper: CGFloat? = 0.5
+    var cap = false
+    var taper: CGFloat? = nil
     var easing: (CGFloat) -> (CGFloat) = { t in t }
     
     public init(cap: Bool = true,
