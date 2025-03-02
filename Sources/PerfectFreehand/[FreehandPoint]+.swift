@@ -506,10 +506,12 @@ extension [FreehandPoint] {
             strokePoints.append(prev)
           }
 
-          // Set the vector of the first point to be the same as the second point.
+      // Set the vector of the first point to be the same as the second point.
+       if strokePoints.count > 1 {
            strokePoints[0].vector = strokePoints[1].vector
-
-      return strokePoints
+       }
+           
+        return strokePoints
     }
 
     private func getStrokeRadius(
