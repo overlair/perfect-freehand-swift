@@ -14,7 +14,7 @@ enum FreehandConstant {
 
 }
 
-extension CGPoint {
+public extension CGPoint {
     /**
      * Negate a vector.
      */
